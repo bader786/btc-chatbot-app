@@ -24,7 +24,7 @@ except ImportError as e:
         except:
             return "Unable to fetch current BTC price"
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder='static', static_url_path='')
 
 # Load environment variables
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "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")
@@ -50,19 +50,7 @@ except Exception as e:
 @app.route('/')
 def index():
     """Serve the main chat interface"""
-    try:
-        return send_from_directory(app.static_folder, 'index.html')
-    except Exception as e:
-        return f"""
-        <html>
-            <body>
-                <h1>BTC Chatbot</h1>
-                <p>Frontend not found. Error: {e}</p>
-                <p>Try accessing /api/chat directly with POST requests.</p>
-                <p>Example: POST /api/chat with JSON: {{"message": "hello"}}</p>
-            </body>
-        </html>
-        """, 200
+    return app.send_static_file('index.html')
 
 @app.route('/health')
 def health_check():
@@ -70,7 +58,7 @@ def health_check():
     return jsonify({
         "status": "healthy",
         "groq_client": "available" if client else "unavailable",
-        "timestamp": "2025-08-16"
+        "timestamp": "2025-08-17"
     })
 
 @app.route('/api/chat', methods=['POST'])
